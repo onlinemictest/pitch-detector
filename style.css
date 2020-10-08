@@ -3,6 +3,10 @@
   position: relative;
 }
 
+#pitch-detector svg {
+  font-weight: bold;
+}
+
 /* html {
   height: 100%;
 } */
@@ -78,16 +82,16 @@
   bottom: 0.3em;
 }
 
-.frequency {
+/* .frequency {
   font-size: 32px;
 }
 
 .frequency span {
   font-size: 50%;
   margin-left: 0.25em;
-}
+} */
 
-.meter {
+/* .meter {
   position: absolute;
   left: 0;
   right: 0;
@@ -133,7 +137,7 @@
 .meter-scale-strong {
   width: 2px;
   border-top-width: 20px;
-}
+} */
 
 .frequency-bars {
   position: absolute;

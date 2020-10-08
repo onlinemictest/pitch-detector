@@ -2,8 +2,8 @@ const Application = function() {
   this.initA4()
   this.tuner = new Tuner(this.a4)
   this.notes = new Notes('.notes', this.tuner)
-  this.meter = new Meter('.meter')
-  this.frequencyBars = new FrequencyBars('.frequency-bars')
+  // this.meter = new Meter('.meter')
+  // this.frequencyBars = new FrequencyBars('.frequency-bars')
   this.update({ name: 'A', frequency: this.a4, octave: 4, value: 69, cents: 0 })
 }
 
@@ -54,14 +54,14 @@ Application.prototype.start = function() {
 Application.prototype.updateFrequencyBars = function() {
   if (this.tuner.analyser) {
     this.tuner.analyser.getByteFrequencyData(this.frequencyData)
-    this.frequencyBars.update(this.frequencyData)
+    // this.frequencyBars.update(this.frequencyData)
   }
   requestAnimationFrame(this.updateFrequencyBars.bind(this))
 }
 
 Application.prototype.update = function(note) {
   this.notes.update(note)
-  this.meter.update((note.cents / 50) * 45)
+  // this.meter.update((note.cents / 50) * 45)
 }
 
 // noinspection JSUnusedGlobalSymbols
