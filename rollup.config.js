@@ -7,13 +7,13 @@ export default {
     input: 'src/index.ts',
     output: {
         file: `dist/index.js`,
-        format: 'es',
+        format: 'cjs',
         sourcemap: true
     },
     plugins: [
-        typescript(),
-        resolve(),
-        terser(),
         commonjs(),
+        resolve(),
+        typescript(),
+        terser(),
     ],
 };
