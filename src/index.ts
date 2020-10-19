@@ -49,13 +49,13 @@ function initGetUserMedia() {
   }
 }
 
-async function* audioProcess(node: ScriptProcessorNode, controller: AbortController) {
-  while (true) {
-    const e = await once(node, 'audioprocess') as AudioProcessingEvent;
-    if (!controller.signal.aborted) yield e;
-    else break;
-  }
-}
+// async function* audioProcess(node: ScriptProcessorNode, controller: AbortController) {
+//   while (true) {
+//     const e = await once(node, 'audioprocess') as AudioProcessingEvent;
+//     if (!controller.signal.aborted) yield e;
+//     else break;
+//   }
+// }
 
 interface Note {
   value: number,
@@ -124,7 +124,7 @@ function getCents(frequency: number, note: number) {
   const pitchDetector = new Pitch('default', BUFFER_SIZE, 1, audioContext.sampleRate);
   pitchDetector.setTolerance(0.5);
 
-  let abort = new AbortController();
+  // let abort = new AbortController();
 
   const wheel = document.getElementById('pitch-wheel')?.querySelector('svg');
   if (!wheel) return;
@@ -137,23 +137,26 @@ function getCents(frequency: number, note: number) {
 
   let prevDeg = 0
 
-  document.getElementById('audio-start')?.addEventListener('click', async function foobar() {
+  document.getElementById('audio-start')?.addEventListener('click', async function clickCallback() {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    
-    document.getElementById('audio-start')?.removeEventListener('click', foobar);
+    document.getElementById('audio-start')?.removeEventListener('click', clickCallback);
 
     audioContext.createMediaStreamSource(stream).connect(analyser);
     analyser.connect(scriptProcessor)
     scriptProcessor.connect(audioContext.destination)
 
-    wheel.style.transition = `transform 500ms ease`;
+    // wheel.style.transition = `transform 500ms ease-in-out`;
 
-    // const lastFQS: number[] = new Array(9).fill(0);
+    // const lastFQS: number[] = new Array(7).fill(0);
 
     console.log('hello')
+    // let lastAnim: { cancel: typeof Animation.prototype.cancel } = { cancel: () => {} };
+    let lastFrame = {}
     scriptProcessor.addEventListener('audioprocess', event => {
-      // console.log(pitchDetector.getConfidence());
       const frequency = pitchDetector.do(event.inputBuffer.getChannelData(0));
+      // lastFQS.shift();
+      // lastFQS.push(frequency);
+      // const avgFreq = [...lastFQS].sort((a, b) => a - b)[Math.trunc(lastFQS.length / 2)];
       const note = getNote(frequency);
 
       const unit = (360 / WHEEL_NOTES);
@@ -161,20 +164,25 @@ function getCents(frequency: number, note: number) {
 
       // console.log(note.name, note.index + (note.cents / 100), lastFQS)
 
-      textEls?.forEach(([, x]) => x.style.fill = 'rgb(67,111,142)');
+      // textEls?.forEach(([, x]) => x.style.fill = 'rgb(67,111,142)');
       if (note.name) {
         const degDiff = Math.trunc(Math.abs(prevDeg - deg));
         prevDeg = deg;
-        // degDiff > 30 && console.log(deg)
-        // console.log((degDiff ** 2) / 10)
-        // wheel.style.transition = `transform ${(degDiff ** 2) / 10}ms ease`;
+        degDiff > 30 && console.log(deg ** 2)
+        // wheel.style.transition = `transform ${((degDiff + 10) ** 3)}ms ease-in-out`;
+        wheel.style.transition = `transform ${(degDiff + 25) * 15}ms ease`;
+        console.log(wheel.style.transition)
 
-        // lastFQS.shift();
-        // lastFQS.push(note.frequency);
         // const avgFreq = [...lastFQS].sort((a, b) => a - b)[Math.trunc(lastFQS.length / 2)];
-        textElsByNote.get(note.name)?.forEach(svgText => svgText.style.fill = `#e25c1b`);
+
+        // textElsByNote.get(note.name)?.forEach(svgText => svgText.style.fill = `#e25c1b`);
         freq.innerText = '' + note.frequency.toFixed(1);
         wheel.style.transform = `rotate(-${deg}deg)`;
+        console.log(wheel.style.transform)
+
+        // const nextFrame = { transform: `rotate(-${deg}deg)` };
+        // wheel.animate([nextFrame], { duration: degDiff * 100, easing: 'ease', composite: 'add' })
+        // lastFrame = nextFrame;
       }
     });
   })
