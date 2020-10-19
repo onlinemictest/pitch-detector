@@ -5,7 +5,7 @@
   margin-left: 0;
   height: 32vw;
   overflow: hidden;
-  margin-top: 30px;
+  margin-top: 50px;
 
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -35,14 +35,14 @@
 
 #pitch-wheel-needle {
   position: absolute;
-  left: 0;
+  left: .5vw;
   right: 0; 
   margin: auto;
   width: 0; 
   height: 0; 
   border-left: .5vw solid transparent;
   border-right: .5vw solid transparent;
-  border-top: 2vw solid #e25c1b;
+  border-top: 2.8vw solid #e25c1b;
 }
 
 #pitch-wheel svg {
@@ -81,5 +81,5 @@
   display: none;
   font-size: 50px; 
   line-height: 50px;
-  padding: 50px 0;
+  padding: 25px 0;
 }
