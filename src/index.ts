@@ -144,6 +144,8 @@ function getCents(frequency: number, note: number) {
     // let lastFrame = {};
     let prevDeg = 0;
 
+    wheel.style.transform = `rotate(-1035deg)`;
+
     scriptProcessor.addEventListener('audioprocess', event => {
       const frequency = pitchDetector.do(event.inputBuffer.getChannelData(0));
       // lastFQS.shift();
@@ -161,7 +163,8 @@ function getCents(frequency: number, note: number) {
         const degDiff = Math.trunc(Math.abs(prevDeg - deg));
         prevDeg = deg;
         // degDiff > 30 && console.log(deg ** 2)
-        wheel.style.transition = `transform ${(degDiff + 25) * 15}ms ease`;
+        const transformTime = (degDiff + 25) * 15;
+        wheel.style.transition = `transform ${transformTime}ms ease`;
         // console.log(wheel.style.transition)
 
         // const avgFreq = [...lastFQS].sort((a, b) => a - b)[Math.trunc(lastFQS.length / 2)];
