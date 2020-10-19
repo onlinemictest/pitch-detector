@@ -1,15 +1,30 @@
 #pitch-wheel {
   font-family: 'Open Sans Condensed';
   font-weight: bold;
-  width: 150%;
-  margin-left: -25%;
+  width: 100%;
+  margin-left: 0;
   height: 32vw;
   overflow: hidden;
-  margin-top: 1vw;
+  margin-top: 30px;
 
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
+
+  -webkit-mask-image: -webkit-linear-gradient(
+    left,
+    rgba(255, 255, 255, 0) 5%,
+    #fff 25%,
+    #fff 75%,
+    rgba(255, 255, 255, 0) 95%
+  );
+  mask-image: linear-gradient(
+    left,
+    rgba(255, 255, 255, 0) 5%,
+    #fff 25%,
+    #fff 75%,
+    rgba(255, 255, 255, 0) 95%
+  );
 }
 
 @media only screen and (max-width: 1024px) {
@@ -32,8 +47,9 @@
 
 #pitch-wheel svg {
   fill: rgb(67,111,142); 
-  width: 150%; 
-  margin-left: -25%; 
+  width: 200%; 
+  margin-left: -50%; 
+  transform-origin: center center;
 }
 
 #pitch-detector {
@@ -54,14 +70,16 @@
   font-family: 'Open Sans Condensed'; 
   font-weight: bold; 
   text-align: center; 
-  font-size: 4vw; 
   position: relative; 
   height: 150px;
-  top: -2vw; 
-  margin: 0 5vw;
+  top: -8vw; 
+  margin: 0 15vw;
   color: rgb(67,111,142);
 }
 
 #pitch-freq-text {
   display: none;
+  font-size: 50px; 
+  line-height: 50px;
+  padding: 50px 0;
 }

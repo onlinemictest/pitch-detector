@@ -11,8 +11,6 @@ const WHEEL_NOTES = 24;
 const BUFFER_SIZE = 4096;
 const NOTE_STRINGS: NoteString[] = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
 
-const once = <T>(el: EventTarget, name: string): Promise<T> => new Promise(res => el.addEventListener(name, res, { once: true }));
-
 function initGetUserMedia() {
   // @ts-ignore
   window.AudioContext = window.AudioContext || window.webkitAudioContext
@@ -48,14 +46,6 @@ function initGetUserMedia() {
     }
   }
 }
-
-// async function* audioProcess(node: ScriptProcessorNode, controller: AbortController) {
-//   while (true) {
-//     const e = await once(node, 'audioprocess') as AudioProcessingEvent;
-//     if (!controller.signal.aborted) yield e;
-//     else break;
-//   }
-// }
 
 interface Note {
   value: number,
@@ -132,14 +122,21 @@ function getCents(frequency: number, note: number) {
   const freq = document.getElementById('pitch-freq')?.querySelector('.freq') as HTMLElement;
   if (!freq) return;
 
+  const startEl = document.getElementById('pitch-audio-start');
+  if (!startEl) return;
+
+  const freqTextEl = document.getElementById('pitch-freq-text');
+  if (!freqTextEl) return;
+
   const textEls = Array.from(wheel.querySelectorAll('text')).reverse().map((x, i) => [NOTE_STRINGS[(i + 1) % 12], x] as [NoteString, SVGTextElement])
   const textElsByNote = new Map([...groupBy(([s]: [NoteString, SVGTextElement]) => s)(textEls)].map(([k, v]) => [k, v.map(_ => _[1])]));
 
   let prevDeg = 0
 
-  document.getElementById('audio-start')?.addEventListener('click', async function clickCallback() {
+  startEl.addEventListener('click', async function clickCallback() {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    document.getElementById('audio-start')?.removeEventListener('click', clickCallback);
+    startEl.parentNode?.removeChild(startEl);
+    freqTextEl.style.display = 'block';
 
     audioContext.createMediaStreamSource(stream).connect(analyser);
     analyser.connect(scriptProcessor)
@@ -149,7 +146,6 @@ function getCents(frequency: number, note: number) {
 
     // const lastFQS: number[] = new Array(7).fill(0);
 
-    console.log('hello')
     // let lastAnim: { cancel: typeof Animation.prototype.cancel } = { cancel: () => {} };
     let lastFrame = {}
     scriptProcessor.addEventListener('audioprocess', event => {
@@ -169,16 +165,15 @@ function getCents(frequency: number, note: number) {
         const degDiff = Math.trunc(Math.abs(prevDeg - deg));
         prevDeg = deg;
         degDiff > 30 && console.log(deg ** 2)
-        // wheel.style.transition = `transform ${((degDiff + 10) ** 3)}ms ease-in-out`;
         wheel.style.transition = `transform ${(degDiff + 25) * 15}ms ease`;
-        console.log(wheel.style.transition)
+        // console.log(wheel.style.transition)
 
         // const avgFreq = [...lastFQS].sort((a, b) => a - b)[Math.trunc(lastFQS.length / 2)];
 
         // textElsByNote.get(note.name)?.forEach(svgText => svgText.style.fill = `#e25c1b`);
         freq.innerText = '' + note.frequency.toFixed(1);
         wheel.style.transform = `rotate(-${deg}deg)`;
-        console.log(wheel.style.transform)
+        // console.log(wheel.style.transform)
 
         // const nextFrame = { transform: `rotate(-${deg}deg)` };
         // wheel.animate([nextFrame], { duration: degDiff * 100, easing: 'ease', composite: 'add' })
