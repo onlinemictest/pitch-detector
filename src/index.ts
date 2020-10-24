@@ -108,12 +108,6 @@ function getCents(frequency: number, note: number) {
 
   initGetUserMedia();
 
-  const audioContext = new AudioContext();
-  const analyser = audioContext.createAnalyser();
-  const scriptProcessor = audioContext.createScriptProcessor(BUFFER_SIZE, 1, 1);
-  const pitchDetector = new Pitch('default', BUFFER_SIZE, 1, audioContext.sampleRate);
-  pitchDetector.setTolerance(0.5);
-
   // let abort = new AbortController();
 
   const wheel = document.getElementById('pitch-wheel')?.querySelector('svg');
@@ -127,14 +121,21 @@ function getCents(frequency: number, note: number) {
   // const textEls = Array.from(wheel.querySelectorAll('text')).reverse().map((x, i) => [NOTE_STRINGS[(i + 1) % 12], x] as [NoteString, SVGTextElement])
   // const textElsByNote = new Map([...groupBy(([s]: [NoteString, SVGTextElement]) => s)(textEls)].map(([k, v]) => [k, v.map(_ => _[1])]));
 
-  startEl.addEventListener('click', async function clickCallback() {
+  startEl.addEventListener('click', async () => {
+    const audioContext = new AudioContext();
+    const analyser = audioContext.createAnalyser();
+    const scriptProcessor = audioContext.createScriptProcessor(BUFFER_SIZE, 1, 1);
+    const pitchDetector = new Pitch('default', BUFFER_SIZE, 1, audioContext.sampleRate);
+    // pitchDetector.setTolerance(0.5);
+
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    startEl.parentNode?.removeChild(startEl);
-    freqTextEl.style.display = 'block';
 
     audioContext.createMediaStreamSource(stream).connect(analyser);
     analyser.connect(scriptProcessor)
     scriptProcessor.connect(audioContext.destination)
+
+    startEl.parentNode?.removeChild(startEl);
+    freqTextEl.style.display = 'block';
 
     // wheel.style.transition = `transform 500ms ease-in-out`;
 
