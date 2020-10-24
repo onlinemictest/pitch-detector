@@ -35,14 +35,14 @@
 
 #pitch-wheel-needle {
   position: absolute;
-  left: .5vw;
-  right: 0; 
+  left: 0;
+  right: 0;
   margin: auto;
-  width: 0; 
-  height: 0; 
-  border-left: .5vw solid transparent;
-  border-right: .5vw solid transparent;
-  border-top: 2.8vw solid #e25c1b;
+  width: 0;
+  height: 3vw;
+  border-left: 3vw solid transparent;
+  border-right: 3vw solid transparent;
+  border-top: 3vw solid #e25c1b;
 }
 
 #pitch-wheel svg {
