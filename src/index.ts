@@ -108,13 +108,11 @@ function getCents(frequency: number, note: number) {
 
   initGetUserMedia();
 
-  // let abort = new AbortController();
-
   const wheel = document.getElementById('pitch-wheel')?.querySelector('svg');
   const freqSpan = document.getElementById('pitch-freq')?.querySelector('.freq') as HTMLElement;
   const noteSpan = document.getElementById('pitch-freq')?.querySelector('.note') as HTMLElement;
   const octaveSpan = document.getElementById('pitch-freq')?.querySelector('.octave') as HTMLElement;
-  const startEl = document.getElementById('pitch-audio-start');
+  const startEl = document.getElementById('pitch-audio-start')?.querySelector('button') as HTMLElement;
   const freqTextEl = document.getElementById('pitch-freq-text');
   if (!wheel || !freqSpan || !noteSpan || !octaveSpan || !startEl || !freqTextEl) return;
 
@@ -183,13 +181,4 @@ function getCents(frequency: number, note: number) {
       }
     });
   })
-
-
-  // const main = html`<div>
-  //   Foobar
-  //   ${clock()}
-  //   ${foo}
-  // </div>`;
-
-  // render(main, document.getElementById('pitch-detector') || document.body);
 })();

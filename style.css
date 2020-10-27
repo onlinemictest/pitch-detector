@@ -42,13 +42,18 @@
   height: 3vw;
   border-left: 3vw solid transparent;
   border-right: 3vw solid transparent;
-  border-top: 3vw solid #e25c1b;
+  border-top: 3vw solid rgb(67,111,142);
+}
+
+#pitch-wheel-needle.active {
+  border-top-color: #e25c1b;
 }
 
 #pitch-wheel svg {
   fill: rgb(67,111,142); 
   width: 200%; 
   margin-left: -50%; 
+  transform: rotate(-1035deg);
   transform-origin: center center;
 }
 
@@ -62,8 +67,20 @@
 }
 
 #pitch-audio-start {
- position: relative;
- height: 150px;
+  position: relative;
+  min-height: 150px;
+  margin-bottom: 20px;
+}
+
+#audio-start {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 150px;
+  height: 150px;
+  margin-bottom: 14px;
 }
 
 #pitch-freq {
@@ -71,9 +88,11 @@
   font-weight: bold; 
   text-align: center; 
   position: relative; 
-  height: 150px;
-  top: -8vw; 
-  margin: 0 15vw;
+  min-height: 150px;
+  max-width: 500px;
+  margin: auto;
+  padding: 0 1vw;
+  top: -12vw; 
   color: rgb(67,111,142);
 }
 
@@ -82,4 +101,8 @@
   font-size: 50px; 
   line-height: 50px;
   padding: 25px 0;
+}
+
+#pitch-freq-text + div {
+  margin-top: 75px;
 }
