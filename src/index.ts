@@ -1,7 +1,3 @@
-// import { render, html, svg } from 'lit-html';
-// import { clock } from './clock';
-// import { foo } from './play-button'
-
 type NoteString = 'C' | 'C#' | 'D' | 'D#' | 'E' | 'F' | 'F#' | 'G' | 'G#' | 'A' | 'A#' | 'B';
 
 const middleA = 440;
@@ -10,6 +6,15 @@ const SEMI_TONE = 69;
 const WHEEL_NOTES = 24;
 const BUFFER_SIZE = 4096;
 const NOTE_STRINGS: NoteString[] = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+const toggleClass = (element: HTMLElement, ...cls: string[]) => {
+  element.classList.remove(...cls);
+
+  // Force layout reflow
+  void element.offsetWidth;
+
+  element.classList.add(...cls);
+};
 
 function initGetUserMedia() {
   // @ts-ignore
@@ -108,32 +113,52 @@ function getCents(frequency: number, note: number) {
 
   initGetUserMedia();
 
-  const wheel = document.getElementById('pitch-wheel')?.querySelector('svg');
-  const freqSpan = document.getElementById('pitch-freq')?.querySelector('.freq') as HTMLElement;
-  const noteSpan = document.getElementById('pitch-freq')?.querySelector('.note') as HTMLElement;
-  const octaveSpan = document.getElementById('pitch-freq')?.querySelector('.octave') as HTMLElement;
-  const startEl = document.getElementById('pitch-audio-start')?.querySelector('button') as HTMLElement;
-  const freqTextEl = document.getElementById('pitch-freq-text');
-  if (!wheel || !freqSpan || !noteSpan || !octaveSpan || !startEl || !freqTextEl) return;
+  const wheel = document.getElementById('pitch-wheel')?.querySelector('svg') as SVGElement|null;
+  const freqSpan = document.getElementById('pitch-freq')?.querySelector('.freq') as HTMLElement|null;
+  const noteSpan = document.getElementById('pitch-freq')?.querySelector('.note') as HTMLElement|null;
+  const octaveSpan = document.getElementById('pitch-freq')?.querySelector('.octave') as HTMLElement|null;
+  const startEl = document.getElementById('audio-start') as HTMLButtonElement|null;
+  const pauseEl = document.getElementById('audio-pause') as HTMLButtonElement|null;
+  const freqTextEl = document.getElementById('pitch-freq-text') as HTMLElement|null;
+  const block2 = document.querySelector('.audio-block-2') as HTMLElement|null;
+  if (!wheel || !freqSpan || !noteSpan || !octaveSpan || !startEl || !pauseEl || !freqTextEl) return;
 
   // const textEls = Array.from(wheel.querySelectorAll('text')).reverse().map((x, i) => [NOTE_STRINGS[(i + 1) % 12], x] as [NoteString, SVGTextElement])
   // const textElsByNote = new Map([...groupBy(([s]: [NoteString, SVGTextElement]) => s)(textEls)].map(([k, v]) => [k, v.map(_ => _[1])]));
 
-  startEl.addEventListener('click', async () => {
-    const audioContext = new AudioContext();
-    const analyser = audioContext.createAnalyser();
-    const scriptProcessor = audioContext.createScriptProcessor(BUFFER_SIZE, 1, 1);
-    const pitchDetector = new Pitch('default', BUFFER_SIZE, 1, audioContext.sampleRate);
-    // pitchDetector.setTolerance(0.5);
+  let audioContext: AudioContext;
+  let analyser: AnalyserNode;
+  let scriptProcessor: ScriptProcessorNode;
+  let pitchDetector: Aubio.Pitch;
+  let stream: MediaStream;
 
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  pauseEl.addEventListener('click', () => {
+    scriptProcessor.disconnect(audioContext.destination);
+    analyser.disconnect(scriptProcessor);
+    audioContext.close();
+    // stream.getTracks().forEach(track => track.stop());
+    startEl.style.display = 'block';
+    pauseEl.style.display = 'none';
+    freqTextEl.style.display = 'none';
+    toggleClass(startEl, 'blob-animation');
+  })
+
+  startEl.addEventListener('click', async () => {
+    audioContext = new AudioContext();
+    analyser = audioContext.createAnalyser();
+    scriptProcessor = audioContext.createScriptProcessor(BUFFER_SIZE, 1, 1);
+    pitchDetector = new Pitch('default', BUFFER_SIZE, 1, audioContext.sampleRate);
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
     audioContext.createMediaStreamSource(stream).connect(analyser);
     analyser.connect(scriptProcessor)
     scriptProcessor.connect(audioContext.destination)
 
-    startEl.parentNode?.removeChild(startEl);
+    startEl.style.display = 'none';
+    pauseEl.style.display = 'block';
     freqTextEl.style.display = 'block';
+    if (block2) block2.style.display = 'none';
+    toggleClass(pauseEl, 'shrink-animation');
 
     // wheel.style.transition = `transform 500ms ease-in-out`;
 
@@ -142,8 +167,6 @@ function getCents(frequency: number, note: number) {
     // let lastAnim: { cancel: typeof Animation.prototype.cancel } = { cancel: () => {} };
     // let lastFrame = {};
     let prevDeg = 0;
-
-    wheel.style.transform = `rotate(-1035deg)`;
 
     scriptProcessor.addEventListener('audioprocess', event => {
       const frequency = pitchDetector.do(event.inputBuffer.getChannelData(0));
@@ -163,7 +186,6 @@ function getCents(frequency: number, note: number) {
         prevDeg = deg;
         // degDiff > 30 && console.log(deg ** 2)
         const transformTime = (degDiff + 25) * 15;
-        wheel.style.transition = `transform ${transformTime}ms ease`;
         // console.log(wheel.style.transition)
 
         // const avgFreq = [...lastFQS].sort((a, b) => a - b)[Math.trunc(lastFQS.length / 2)];
@@ -172,6 +194,8 @@ function getCents(frequency: number, note: number) {
         freqSpan.innerText = note.frequency.toFixed(1);
         noteSpan.innerText = note.name;
         octaveSpan.innerText = note.octave.toString();
+
+        wheel.style.transition = `transform ${transformTime}ms ease`;
         wheel.style.transform = `rotate(-${deg}deg)`;
         // console.log(wheel.style.transform)
 
