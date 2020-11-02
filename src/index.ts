@@ -74,7 +74,7 @@ function getNote(frequency: number): Note {
 }
 
 function groupBy<X, K>(f: (x: X) => K) {
-  return function(xs: Iterable<X>): Map<K, X[]> {
+  return function (xs: Iterable<X>): Map<K, X[]> {
     const res = new Map<K, X[]>();
     for (const x of xs) {
       const key = f(x);
@@ -107,20 +107,18 @@ function getCents(frequency: number, note: number) {
   return Math.floor((1200 * Math.log(frequency / getStandardFrequency(note))) / Math.log(2));
 }
 
-; (async () => {
-  // @ts-expect-error
-  const { Pitch }: typeof Aubio = await Aubio();
-
+// @ts-expect-error
+Aubio().then(({ Pitch }) => {
   initGetUserMedia();
 
-  const wheel = document.getElementById('pitch-wheel')?.querySelector('svg') as SVGElement|null;
-  const freqSpan = document.getElementById('pitch-freq')?.querySelector('.freq') as HTMLElement|null;
-  const noteSpan = document.getElementById('pitch-freq')?.querySelector('.note') as HTMLElement|null;
-  const octaveSpan = document.getElementById('pitch-freq')?.querySelector('.octave') as HTMLElement|null;
-  const startEl = document.getElementById('audio-start') as HTMLButtonElement|null;
-  const pauseEl = document.getElementById('audio-pause') as HTMLButtonElement|null;
-  const freqTextEl = document.getElementById('pitch-freq-text') as HTMLElement|null;
-  const block2 = document.querySelector('.audio-block-2') as HTMLElement|null;
+  const wheel = document.getElementById('pitch-wheel')?.querySelector('svg') as SVGElement | null;
+  const freqSpan = document.getElementById('pitch-freq')?.querySelector('.freq') as HTMLElement | null;
+  const noteSpan = document.getElementById('pitch-freq')?.querySelector('.note') as HTMLElement | null;
+  const octaveSpan = document.getElementById('pitch-freq')?.querySelector('.octave') as HTMLElement | null;
+  const startEl = document.getElementById('audio-start') as HTMLButtonElement | null;
+  const pauseEl = document.getElementById('audio-pause') as HTMLButtonElement | null;
+  const freqTextEl = document.getElementById('pitch-freq-text') as HTMLElement | null;
+  const block2 = document.querySelector('.audio-block-2') as HTMLElement | null;
   if (!wheel || !freqSpan || !noteSpan || !octaveSpan || !startEl || !pauseEl || !freqTextEl) return;
 
   // const textEls = Array.from(wheel.querySelectorAll('text')).reverse().map((x, i) => [NOTE_STRINGS[(i + 1) % 12], x] as [NoteString, SVGTextElement])
@@ -143,66 +141,70 @@ function getCents(frequency: number, note: number) {
     toggleClass(startEl, 'blob-animation');
   })
 
-  startEl.addEventListener('click', async () => {
+  startEl.addEventListener('click', () => {
     audioContext = new AudioContext();
     analyser = audioContext.createAnalyser();
     scriptProcessor = audioContext.createScriptProcessor(BUFFER_SIZE, 1, 1);
     pitchDetector = new Pitch('default', BUFFER_SIZE, 1, audioContext.sampleRate);
-    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-    audioContext.createMediaStreamSource(stream).connect(analyser);
-    analyser.connect(scriptProcessor)
-    scriptProcessor.connect(audioContext.destination)
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(x => {
+      stream = x;
 
-    startEl.style.display = 'none';
-    pauseEl.style.display = 'block';
-    freqTextEl.style.display = 'block';
-    if (block2) block2.style.display = 'none';
-    toggleClass(pauseEl, 'shrink-animation');
+      audioContext.createMediaStreamSource(stream).connect(analyser);
+      analyser.connect(scriptProcessor);
+      scriptProcessor.connect(audioContext.destination);
 
-    // wheel.style.transition = `transform 500ms ease-in-out`;
+      startEl.style.display = 'none';
+      pauseEl.style.display = 'block';
+      freqTextEl.style.display = 'block';
+      if (block2) block2.style.display = 'none';
+      toggleClass(pauseEl, 'shrink-animation');
 
-    // const lastFQS: number[] = new Array(7).fill(0);
+      // wheel.style.transition = `transform 500ms ease-in-out`;
 
-    // let lastAnim: { cancel: typeof Animation.prototype.cancel } = { cancel: () => {} };
-    // let lastFrame = {};
-    let prevDeg = 0;
+      // const lastFQS: number[] = new Array(7).fill(0);
 
-    scriptProcessor.addEventListener('audioprocess', event => {
-      const frequency = pitchDetector.do(event.inputBuffer.getChannelData(0));
-      // lastFQS.shift();
-      // lastFQS.push(frequency);
-      // const avgFreq = [...lastFQS].sort((a, b) => a - b)[Math.trunc(lastFQS.length / 2)];
-      const note = getNote(frequency);
+      // let lastAnim: { cancel: typeof Animation.prototype.cancel } = { cancel: () => {} };
+      // let lastFrame = {};
+      let prevDeg = 0;
 
-      const unit = (360 / WHEEL_NOTES);
-      const deg = note.index * unit + (note.cents / 100) * unit;
-
-      // console.log(note.name, note.index + (note.cents / 100), lastFQS)
-
-      // textEls?.forEach(([, x]) => x.style.fill = 'rgb(67,111,142)');
-      if (note.name) {
-        const degDiff = Math.trunc(Math.abs(prevDeg - deg));
-        prevDeg = deg;
-        // degDiff > 30 && console.log(deg ** 2)
-        const transformTime = (degDiff + 25) * 15;
-        // console.log(wheel.style.transition)
-
+      scriptProcessor.addEventListener('audioprocess', event => {
+        const frequency = pitchDetector.do(event.inputBuffer.getChannelData(0));
+        // lastFQS.shift();
+        // lastFQS.push(frequency);
         // const avgFreq = [...lastFQS].sort((a, b) => a - b)[Math.trunc(lastFQS.length / 2)];
+        const note = getNote(frequency);
 
-        // textElsByNote.get(note.name)?.forEach(svgText => svgText.style.fill = `#e25c1b`);
-        freqSpan.innerText = note.frequency.toFixed(1);
-        noteSpan.innerText = note.name;
-        octaveSpan.innerText = note.octave.toString();
+        const unit = (360 / WHEEL_NOTES);
+        const deg = note.index * unit + (note.cents / 100) * unit;
 
-        wheel.style.transition = `transform ${transformTime}ms ease`;
-        wheel.style.transform = `rotate(-${deg}deg)`;
-        // console.log(wheel.style.transform)
+        // console.log(note.name, note.index + (note.cents / 100), lastFQS)
 
-        // const nextFrame = { transform: `rotate(-${deg}deg)` };
-        // wheel.animate([nextFrame], { duration: degDiff * 100, easing: 'ease', composite: 'add' })
-        // lastFrame = nextFrame;
-      }
+        // textEls?.forEach(([, x]) => x.style.fill = 'rgb(67,111,142)');
+        if (note.name) {
+          const degDiff = Math.trunc(Math.abs(prevDeg - deg));
+          prevDeg = deg;
+          // degDiff > 30 && console.log(deg ** 2)
+          const transformTime = (degDiff + 25) * 15;
+          // console.log(wheel.style.transition)
+
+          // const avgFreq = [...lastFQS].sort((a, b) => a - b)[Math.trunc(lastFQS.length / 2)];
+
+          // textElsByNote.get(note.name)?.forEach(svgText => svgText.style.fill = `#e25c1b`);
+          freqSpan.innerText = note.frequency.toFixed(1);
+          noteSpan.innerText = note.name;
+          octaveSpan.innerText = note.octave.toString();
+
+          wheel.style.transition = `transform ${transformTime}ms ease`;
+          wheel.style.transform = `rotate(-${deg}deg)`;
+          // console.log(wheel.style.transform)
+
+          // const nextFrame = { transform: `rotate(-${deg}deg)` };
+          // wheel.animate([nextFrame], { duration: degDiff * 100, easing: 'ease', composite: 'add' })
+          // lastFrame = nextFrame;
+        }
+      });
     });
-  })
-})();
+  });
+});
+
