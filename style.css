@@ -5,8 +5,9 @@
   margin-left: 0;
   height: 32vw;
   overflow: hidden;
-  margin-top: 50px;
+  margin-top: 30px;
   contain: content;
+  padding: 0 5vw;
 
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -31,6 +32,7 @@
 @media only screen and (max-width: 1024px) {
   #pitch-wheel {
     height: 38vw;
+    padding: 0;
   }
 }
 
@@ -60,7 +62,7 @@
 
 #pitch-detector {
   position: relative;
-  margin-bottom: 5vw;
+  margin-bottom: 20px;
 }
 
 #pitch-detector svg {
@@ -119,8 +121,17 @@
   max-width: 500px;
   margin: auto;
   padding: 0 1vw;
-  top: -12vw; 
+  top: -12.5vw; 
   color: rgb(67,111,142);
+}
+
+@media only screen and (min-aspect-ratio: 21/9) {
+  #pitch-wheel {
+    padding: 0 10vw;
+  }
+  #pitch-freq {
+    top: -16.5vw;
+  }
 }
 
 #pitch-freq-text {
