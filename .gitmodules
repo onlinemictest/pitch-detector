@@ -1,3 +1,0 @@
-[submodule "vendor/aubiojs"]
-	path = vendor/aubiojs
-	url = git@github.com:onlinemictest/aubiojs.git
