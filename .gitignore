@@ -1,3 +1,12 @@
+node_modules
 src
 licenses
-*.json
+/*.js*
+vendor/aubiojs/aubio
+vendor/aubiojs/examples
+vendor/aubiojs/src
+vendor/aubiojs/*.txt
+vendor/aubiojs/*.d.ts
+vendor/aubiojs/*.md
+vendor/aubiojs/license
+vendor/aubiojs/.git*
