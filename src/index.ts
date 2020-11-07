@@ -135,7 +135,7 @@ Aubio().then(({ Pitch }) => {
   let analyser: AnalyserNode;
   let scriptProcessor: ScriptProcessorNode;
   let pitchDetector: Aubio.Pitch;
-  let stream: MediaStream;
+  // let stream: MediaStream;
 
   pauseEl.addEventListener('click', () => {
     scriptProcessor.disconnect(audioContext.destination);
@@ -154,9 +154,8 @@ Aubio().then(({ Pitch }) => {
     scriptProcessor = audioContext.createScriptProcessor(BUFFER_SIZE, 1, 1);
     pitchDetector = new Pitch('default', BUFFER_SIZE, 1, audioContext.sampleRate);
 
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(x => {
-      stream = x;
-
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+      // stream = s;
       audioContext.createMediaStreamSource(stream).connect(analyser);
       analyser.connect(scriptProcessor);
       scriptProcessor.connect(audioContext.destination);
