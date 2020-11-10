@@ -164,6 +164,7 @@ Aubio().then(({ Pitch }) => {
     startEl.style.display = 'block';
     pauseEl.style.display = 'none';
     freqTextEl.style.display = 'none';
+    if (block2) block2.style.display = 'block';
     toggleClass(startEl, 'blob-animation');
   })
 
