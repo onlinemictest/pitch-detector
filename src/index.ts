@@ -140,7 +140,7 @@ Aubio().then(({ Pitch }) => {
     return alert('Browser not supported')
   }
 
-  const wheel = document.getElementById('pitch-wheel')?.querySelector('svg') as SVGElement | null;
+  const wheel = document.getElementById('pitch-wheel-svg') as HTMLImageElement | null;
   const freqSpan = document.getElementById('pitch-freq')?.querySelector('.freq') as HTMLElement | null;
   const noteSpan = document.getElementById('pitch-freq')?.querySelector('.note') as HTMLElement | null;
   const octaveSpan = document.getElementById('pitch-freq')?.querySelector('.octave') as HTMLElement | null;
