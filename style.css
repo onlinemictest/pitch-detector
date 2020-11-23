@@ -52,8 +52,7 @@
   border-top-color: #e25c1b;
 }
 
-#pitch-wheel svg {
-  fill: rgb(67,111,142); 
+#pitch-wheel-svg {
   width: 200%; 
   margin-left: -50%; 
   transform: rotate(-1035deg);
@@ -63,10 +62,6 @@
 #pitch-detector {
   position: relative;
   margin-bottom: 20px;
-}
-
-#pitch-detector svg {
-  font-weight: bold;
 }
 
 #pitch-audio-start {
