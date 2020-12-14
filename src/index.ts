@@ -92,18 +92,6 @@ function getNote(frequency: number): Note {
   };
 }
 
-function groupBy<X, K>(f: (x: X) => K) {
-  return function (xs: Iterable<X>): Map<K, X[]> {
-    const res = new Map<K, X[]>();
-    for (const x of xs) {
-      const key = f(x);
-      const group = res.get(key) || [];
-      res.set(key, [...group, x]);
-    }
-    return res;
-  };
-}
-
 /**
  * Get musical note from frequency
  */
