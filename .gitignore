@@ -2,3 +2,4 @@ onlinemictest_files
 node_modules
 dist
 old
+*.svg
