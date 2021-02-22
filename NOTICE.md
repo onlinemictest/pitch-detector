@@ -8,5 +8,10 @@ This software also uses portions of the `aubio/aubio` project, which is
 
 > Copyright © 2003-2017 Paul Brossier <piem@aubio.org>
 
+This software also uses portions of the `ColinEberhardt/applause-button` project, which is		
+[MIT] licensed with the following copyright:
+
+> Copyright (c) 2019 Colin Eberhardt
+
 [MIT]: licenses/MIT.md
 [GPL-3.0]: licenses/GPL-3.0.md
