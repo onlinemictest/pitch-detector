@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2020 Online Mic Test
+ * Copyright (C) 2021 Online Mic Test
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -23,7 +23,7 @@ const middleA = 440;
 
 const SEMI_TONE = 69;
 const WHEEL_NOTES = 24;
-const BUFFER_SIZE = 4096;
+const BUFFER_SIZE = 8192;
 const NOTE_STRINGS: NoteString[] = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
 const toggleClass = (element: HTMLElement, ...cls: string[]) => {
@@ -114,19 +114,26 @@ function getCents(frequency: number, note: number) {
   return Math.floor((1200 * Math.log(frequency / getStandardFrequency(note))) / Math.log(2));
 }
 
+
+if (false
+  || !('WebAssembly' in window) 
+  || !('AudioContext' in window) 
+  || !('createAnalyser' in AudioContext.prototype) 
+  || !('createScriptProcessor' in AudioContext.prototype) 
+) {
+  if (!('WebAssembly' in window)) 
+    throw alert(`Browser not supported: 'WebAssembly' is not defined`);
+  if (!('AudioContext' in window)) 
+    throw alert(`Browser not supported: 'AudioContext' is not defined`)
+  if (!('createAnalyser' in AudioContext.prototype)) 
+    throw alert(`Browser not supported: 'AudioContext.prototype.createAnalyser' is not defined`)
+  if (!('createScriptProcessor' in AudioContext.prototype)) 
+    throw alert(`Browser not supported: 'AudioContext.prototype.createScriptProcessor' is not defined`)
+}
+
 // @ts-expect-error
 Aubio().then(({ Pitch }) => {
   initGetUserMedia();
-
-  if (
-    !('WebAssembly' in window) ||
-    !('AudioContext' in window) ||
-    !('createAnalyser' in AudioContext.prototype) ||
-    !('createScriptProcessor' in AudioContext.prototype) ||
-    !('trunc' in Math)
-  ) {
-    return alert('Browser not supported')
-  }
 
   const wheel = document.getElementById('pitch-wheel-svg') as HTMLImageElement | null;
   const freqSpan = document.getElementById('pitch-freq')?.querySelector('.freq') as HTMLElement | null;
