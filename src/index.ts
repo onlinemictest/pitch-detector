@@ -114,6 +114,7 @@ function getCents(frequency: number, note: number) {
   return Math.floor((1200 * Math.log(frequency / getStandardFrequency(note))) / Math.log(2));
 }
 
+initGetUserMedia();
 
 if (false
   || !('WebAssembly' in window) 
@@ -133,8 +134,6 @@ if (false
 
 // @ts-expect-error
 Aubio().then(({ Pitch }) => {
-  initGetUserMedia();
-
   const wheel = document.getElementById('pitch-wheel-svg') as HTMLImageElement | null;
   const freqSpan = document.getElementById('pitch-freq')?.querySelector('.freq') as HTMLElement | null;
   const noteSpan = document.getElementById('pitch-freq')?.querySelector('.note') as HTMLElement | null;
