@@ -7,8 +7,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf dist",
-    "build": "esbuild src/index.ts --bundle --minify --target=chrome58,firefox57,safari11,edge16 --outfile=dist/index.js",
-    "watch": "esbuild src/index.ts --bundle --minify --target=chrome58,firefox57,safari11,edge16 --outfile=dist/index.js --sourcemap --watch --define:process.env.DEBUG=true",
+    "build": "esbuild src/index.ts --bundle --target=chrome58,firefox57,safari11,edge16 --outfile=dist/index.js --minify",
+    "watch": "esbuild src/index.ts --bundle --target=chrome58,firefox57,safari11,edge16 --outfile=dist/index.js --sourcemap --watch --define:process.env.DEBUG=true",
     "serve": "serve -l 5001",
     "dev": "npm run watch & npm run serve"
   },

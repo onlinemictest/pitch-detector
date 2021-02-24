@@ -1,3 +1,5 @@
+import { once, timeout } from "./helper-fns";
+
 /**
  * Copyright (C) 2021 Online Mic Test
  *
@@ -23,7 +25,7 @@ const middleA = 440;
 
 const SEMI_TONE = 69;
 const WHEEL_NOTES = 24;
-const BUFFER_SIZE = 8192;
+const BUFFER_SIZE = 4096;
 const NOTE_STRINGS: NoteString[] = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
 const toggleClass = (element: HTMLElement, ...cls: string[]) => {
@@ -114,71 +116,100 @@ function getCents(frequency: number, note: number) {
   return Math.floor((1200 * Math.log(frequency / getStandardFrequency(note))) / Math.log(2));
 }
 
+const blobAnimation: (startEl: HTMLElement) => void = 'animate' in Element.prototype
+  ? el => el.animate([{ transform: 'scale(0.33)' }, { transform: 'scale(1)' }], { duration: 125, easing: 'ease' })
+  : el => toggleClass(el, 'blob-animation')
+
+const shrinkAnimation: (pauseEl: HTMLElement) => void = 'animate' in Element.prototype
+  ? el => el.animate([{ transform: 'scale(3) ' }, { transform: 'scale(1)' }], { duration: 125, easing: 'ease' })
+  : el => toggleClass(el, 'shrink-animation');
+
 initGetUserMedia();
 
 if (false
-  || !('WebAssembly' in window) 
-  || !('AudioContext' in window) 
-  || !('createAnalyser' in AudioContext.prototype) 
-  || !('createScriptProcessor' in AudioContext.prototype) 
+  || !('WebAssembly' in window)
+  || !('AudioContext' in window)
+  || !('createAnalyser' in AudioContext.prototype)
+  || !('createScriptProcessor' in AudioContext.prototype)
 ) {
-  if (!('WebAssembly' in window)) 
+  if (!('WebAssembly' in window))
     throw alert(`Browser not supported: 'WebAssembly' is not defined`);
-  if (!('AudioContext' in window)) 
+  if (!('AudioContext' in window))
     throw alert(`Browser not supported: 'AudioContext' is not defined`)
-  if (!('createAnalyser' in AudioContext.prototype)) 
+  if (!('createAnalyser' in AudioContext.prototype))
     throw alert(`Browser not supported: 'AudioContext.prototype.createAnalyser' is not defined`)
-  if (!('createScriptProcessor' in AudioContext.prototype)) 
+  if (!('createScriptProcessor' in AudioContext.prototype))
     throw alert(`Browser not supported: 'AudioContext.prototype.createScriptProcessor' is not defined`)
 }
 
 // @ts-expect-error
 Aubio().then(({ Pitch }) => {
+  const pitchDetectorEl = document.getElementById('pitch-detector') as HTMLDivElement | null;
   const wheel = document.getElementById('pitch-wheel-svg') as HTMLImageElement | null;
   const freqSpan = document.getElementById('pitch-freq')?.querySelector('.freq') as HTMLElement | null;
   const noteSpan = document.getElementById('pitch-freq')?.querySelector('.note') as HTMLElement | null;
   const octaveSpan = document.getElementById('pitch-freq')?.querySelector('.octave') as HTMLElement | null;
   const startEl = document.getElementById('audio-start') as HTMLButtonElement | null;
   const pauseEl = document.getElementById('audio-pause') as HTMLButtonElement | null;
+  const pressPlay = document.getElementById('circle-text-play') as HTMLSpanElement | null
+  const errorEl = document.getElementById('circle-text-error') as HTMLSpanElement | null;
   const freqTextEl = document.getElementById('pitch-freq-text') as HTMLElement | null;
-  const block2 = document.querySelector('.audio-block-2') as HTMLElement | null;
-  if (!wheel || !freqSpan || !noteSpan || !octaveSpan || !startEl || !pauseEl || !freqTextEl) return;
+  if (
+    !pitchDetectorEl ||
+    !wheel ||
+    !freqSpan ||
+    !noteSpan ||
+    !octaveSpan ||
+    !startEl ||
+    !pauseEl ||
+    !pressPlay ||
+    !errorEl ||
+    !freqTextEl
+  ) {
+    return alert('Expected HTML element missing');
+  }
 
   let audioContext: AudioContext;
   let analyser: AnalyserNode;
   let scriptProcessor: ScriptProcessorNode;
   let pitchDetector: Aubio.Pitch;
-  // let stream: MediaStream;
+  let stream: MediaStream;
 
-  pauseEl.addEventListener('click', () => {
+  pauseEl.addEventListener('click', async () => {
+    startEl.style.display = 'block';
+    pauseEl.style.display = 'none';
+    freqTextEl.style.opacity = '0';
+    pressPlay.style.opacity = '1';
+    blobAnimation(startEl);
+    await Promise.race([once(startEl, 'animationend'), timeout(250)]);
+
     scriptProcessor.disconnect(audioContext.destination);
     analyser.disconnect(scriptProcessor);
     audioContext.close();
-    // stream.getTracks().forEach(track => track.stop());
-    startEl.style.display = 'block';
-    pauseEl.style.display = 'none';
-    freqTextEl.style.display = 'none';
-    if (block2) block2.style.display = 'block';
-    toggleClass(startEl, 'blob-animation');
+    stream.getTracks().forEach(track => track.stop());
   })
 
-  startEl.addEventListener('click', () => {
+  startEl.addEventListener('click', async () => {
+    pitchDetectorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    startEl.style.display = 'none';
+    pauseEl.style.display = 'block';
+    pressPlay.style.opacity = '0';
+    shrinkAnimation(pauseEl);
+    await Promise.race([once(pauseEl, 'animationend'), timeout(250)]);
+
     audioContext = new AudioContext();
     analyser = audioContext.createAnalyser();
     scriptProcessor = audioContext.createScriptProcessor(BUFFER_SIZE, 1, 1);
     pitchDetector = new Pitch('default', BUFFER_SIZE, 1, audioContext.sampleRate);
 
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-      // stream = s;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       audioContext.createMediaStreamSource(stream).connect(analyser);
       analyser.connect(scriptProcessor);
       scriptProcessor.connect(audioContext.destination);
 
-      startEl.style.display = 'none';
-      pauseEl.style.display = 'block';
-      freqTextEl.style.display = 'block';
-      if (block2) block2.style.display = 'none';
-      toggleClass(pauseEl, 'shrink-animation');
+      freqTextEl.style.opacity = '1';
+      errorEl.style.opacity = '0';
 
       let prevDeg = 0;
 
@@ -202,7 +233,14 @@ Aubio().then(({ Pitch }) => {
           wheel.style.transform = `rotate(-${deg}deg)`;
         }
       });
-    });
+    } catch (err) {
+      startEl.style.display = 'block';
+      pauseEl.style.display = 'none';
+      freqTextEl.style.opacity = '0';
+      blobAnimation(startEl);
+      errorEl.innerText = err.message;
+      errorEl.style.opacity = '1';
+    };
   });
 });
 
