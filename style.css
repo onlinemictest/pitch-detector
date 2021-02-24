@@ -175,6 +175,13 @@
   right: 0;
 }
 
+#circle-text-error {
+  display: none;
+  color: indianred;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
 .tuners-privacy-box {
   font-family: 'Open Sans Condensed';
   font-weight: 700;

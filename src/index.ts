@@ -179,7 +179,7 @@ Aubio().then(({ Pitch }) => {
     startEl.style.display = 'block';
     pauseEl.style.display = 'none';
     freqTextEl.style.opacity = '0';
-    pressPlay.style.opacity = '1';
+    pressPlay.style.display = 'block';
     blobAnimation(startEl);
     await Promise.race([once(startEl, 'animationend'), timeout(250)]);
 
@@ -193,7 +193,8 @@ Aubio().then(({ Pitch }) => {
     pitchDetectorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
     startEl.style.display = 'none';
     pauseEl.style.display = 'block';
-    pressPlay.style.opacity = '0';
+    pressPlay.style.display = 'none';
+    errorEl.style.display = 'none';
     shrinkAnimation(pauseEl);
     await Promise.race([once(pauseEl, 'animationend'), timeout(250)]);
 
@@ -209,7 +210,6 @@ Aubio().then(({ Pitch }) => {
       scriptProcessor.connect(audioContext.destination);
 
       freqTextEl.style.opacity = '1';
-      errorEl.style.opacity = '0';
 
       let prevDeg = 0;
 
@@ -239,7 +239,8 @@ Aubio().then(({ Pitch }) => {
       freqTextEl.style.opacity = '0';
       blobAnimation(startEl);
       errorEl.innerText = err.message;
-      errorEl.style.opacity = '1';
+      pressPlay.style.display = 'none';
+      errorEl.style.display = 'block';
     };
   });
 });
