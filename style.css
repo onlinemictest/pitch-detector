@@ -46,12 +46,6 @@
   }
 }
 
-/* @media only screen and (min-width: 1680px) {
-  #pitch-detector {
-    margin: 0 8.5vw;
-  }
-} */
-
 .border-box {
   border: 3px solid rgb(67,111,142);
   border-radius: 25px;
@@ -162,15 +156,22 @@
   padding: 100px 0 50px;
 }
 
-@media only screen and (max-width: 540px) {
+@media only screen and (max-width: 1024px) {
   #pitch-freq {
     margin-top: 24vw;
+  }
+}
+
+@media only screen and (max-width: 540px) {
+  #pitch-freq {
+    margin-top: 30vw;
   }
 }
 
 #pitch-message-text {
   position: absolute;
   top: 165px;
+  font-size: 28px;
   left: 0;
   right: 0;
 }
