@@ -162,15 +162,22 @@
   padding: 100px 0 50px;
 }
 
-@media only screen and (max-width: 540px) {
+@media only screen and (max-width: 1024px) {
   #pitch-freq {
     margin-top: 24vw;
+  }
+}
+
+@media only screen and (max-width: 540px) {
+  #pitch-freq {
+    margin-top: 30vw;
   }
 }
 
 #pitch-message-text {
   position: absolute;
   top: 165px;
+  font-size: 28px;
   left: 0;
   right: 0;
 }
