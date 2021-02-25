@@ -1,9 +1,5 @@
 node_modules
-src
-licenses
-/*.js*
-/LICENSE
-/NOTICE.md
+*.map
 vendor/aubiojs/aubio
 vendor/aubiojs/examples
 vendor/aubiojs/src
