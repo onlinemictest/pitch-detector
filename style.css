@@ -46,12 +46,6 @@
   }
 }
 
-/* @media only screen and (min-width: 1680px) {
-  #pitch-detector {
-    margin: 0 8.5vw;
-  }
-} */
-
 .border-box {
   border: 3px solid rgb(67,111,142);
   border-radius: 25px;
