@@ -49,6 +49,10 @@
   #pitch-detector {
     min-height: 62vw;
   }
+  #pitch-wheel {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
 }
 
 @media only screen and (min-aspect-ratio: 21/9) {
