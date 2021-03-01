@@ -20,9 +20,20 @@
   padding: 0 5vw;
   position: absolute;
 
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  user-select: none;
+  -webkit-mask-image: -webkit-linear-gradient(
+    left,
+    rgba(255, 255, 255, 0) 5%,
+    #fff 25%,
+    #fff 75%,
+    rgba(255, 255, 255, 0) 95%
+  );
+  mask-image: linear-gradient(
+    left,
+    rgba(255, 255, 255, 0) 5%,
+    #fff 25%,
+    #fff 75%,
+    rgba(255, 255, 255, 0) 95%
+  );
 }
 
 @media only screen and (max-width: 1024px) {
@@ -44,11 +55,6 @@
   #pitch-detector {
     min-height: 32vw;
   }
-}
-
-.border-box {
-  border: 3px solid rgb(67,111,142);
-  border-radius: 25px;
 }
 
 .note, .octave { color: #e25c1b }
