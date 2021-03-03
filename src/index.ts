@@ -1,4 +1,4 @@
-import { once, timeout } from "./helper-fns";
+import { once, set, timeout } from "./helper-fns";
 import { initGetUserMedia } from "./init-get-user-media";
 import { toggleClass } from "./dom-fns";
 import { getNote } from "./music-fns";
@@ -60,9 +60,9 @@ Aubio().then(({ Pitch }) => {
   const octaveSpan = document.getElementById('pitch-freq')?.querySelector('.octave') as HTMLElement | null;
   const startEl = document.getElementById('audio-start') as HTMLButtonElement | null;
   const pauseEl = document.getElementById('audio-pause') as HTMLButtonElement | null;
-  const pressPlay = document.getElementById('circle-text-play') as HTMLSpanElement | null
   const errorEl = document.getElementById('circle-text-error') as HTMLSpanElement | null;
   const freqTextEl = document.getElementById('pitch-freq-text') as HTMLElement | null;
+  const privacyNotice = document.querySelector('.tuners-privacy-box') as HTMLElement | null;
   if (
     !pitchDetectorEl ||
     !wheel ||
@@ -71,7 +71,6 @@ Aubio().then(({ Pitch }) => {
     !octaveSpan ||
     !startEl ||
     !pauseEl ||
-    !pressPlay ||
     !errorEl ||
     !freqTextEl
   ) {
@@ -88,7 +87,7 @@ Aubio().then(({ Pitch }) => {
     startEl.style.display = 'block';
     pauseEl.style.display = 'none';
     freqTextEl.style.opacity = '0';
-    pressPlay.style.display = 'block';
+    set(privacyNotice?.style, 'visibility', '');
     blobAnimation(startEl);
     await Promise.race([once(startEl, 'animationend'), timeout(250)]);
 
@@ -102,8 +101,8 @@ Aubio().then(({ Pitch }) => {
     pitchDetectorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
     startEl.style.display = 'none';
     pauseEl.style.display = 'block';
-    pressPlay.style.display = 'none';
     errorEl.style.display = 'none';
+    set(privacyNotice?.style, 'visibility', 'hidden');
     shrinkAnimation(pauseEl);
     await Promise.race([once(pauseEl, 'animationend'), timeout(250)]);
 
@@ -148,7 +147,6 @@ Aubio().then(({ Pitch }) => {
       freqTextEl.style.opacity = '0';
       blobAnimation(startEl);
       errorEl.innerText = err.message;
-      pressPlay.style.display = 'none';
       errorEl.style.display = 'block';
     };
   });

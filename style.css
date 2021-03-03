@@ -1,7 +1,6 @@
 #pitch-detector {
   position: relative;
   margin: 30px 0 60px;
-  min-height: 32vw;
   overflow: hidden;
   contain: content;
 
@@ -37,27 +36,21 @@
 }
 
 @media only screen and (max-width: 1024px) {
-  #pitch-detector {
-    min-height: 38vw;
-  }
   #pitch-wheel {
     padding: 0;
   }
 }
 
-@media only screen and (max-width: 540px) {
-  #pitch-detector {
-    min-height: 62vw;
-  }
+@media only screen and (min-aspect-ratio: 21/9) {
   #pitch-wheel {
-    -webkit-mask-image: none;
-    mask-image: none;
+    padding: 0 10vw;
   }
 }
 
-@media only screen and (min-aspect-ratio: 21/9) {
-  #pitch-detector {
-    min-height: 32vw;
+@media only screen and (max-width: 540px) {
+  #pitch-wheel {
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 }
 
@@ -147,8 +140,20 @@
   min-height: 150px;
   margin: auto;
   padding: 0 1vw;
-  margin-top: 18vw;
+  margin-top: 15.5vw;
   position: relative;
+}
+
+@media only screen and (max-width: 1024px) {
+  #pitch-freq {
+    margin-top: 21.5vw;
+  }
+}
+
+@media only screen and (max-width: 540px) {
+  #pitch-freq {
+    margin-top: 26.5vw;
+  }
 }
 
 .pitch-text {
@@ -164,18 +169,6 @@
 #pitch-freq-text {
   opacity: 0;
   padding: 100px 0 50px;
-}
-
-@media only screen and (max-width: 1024px) {
-  #pitch-freq {
-    margin-top: 24vw;
-  }
-}
-
-@media only screen and (max-width: 540px) {
-  #pitch-freq {
-    margin-top: 30vw;
-  }
 }
 
 #pitch-message-text {
@@ -199,7 +192,7 @@
   text-align: center;
   min-height: 150px;
   max-width: 500px;
-  margin: auto;
+  margin: -134px auto 0;
   padding: 0 1vw;
   color: rgb(67,111,142);
 }
