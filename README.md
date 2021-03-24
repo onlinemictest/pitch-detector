@@ -19,4 +19,4 @@ npm run dev
 ```
 
 With this, the app will be running and you'll get a message giving the
-port (e.g, 'Serving! ... Local: http://localhost:5001`).  Browse to that address.
+port (e.g, `Serving! ... Local: http://localhost:5001`).  Browse to that address.
